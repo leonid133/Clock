@@ -1,0 +1,47 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "Timer.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma link "trayicon"
+#pragma resource "*.dfm"
+TForm1 *Form1;
+// Иконка в треере
+   TNotifyIconData NID;
+//---------------------------------------------------------------------------
+__fastcall TForm1::TForm1(TComponent* Owner)
+   : TForm(Owner)
+{
+   Form1->Visible = true;
+   // Создаём иконку в треере
+  AnsiString trey = "Текст при наведении на иконку";
+  NID.cbSize = sizeof(TNotifyIconData);
+  NID.hWnd = Handle;
+  NID.uID = 1;
+  NID.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
+  NID.uCallbackMessage = MyTrayIcon;
+  // Берётся иконка приложения, но можно выбрать другую
+  NID.hIcon = Application->Icon->Handle;
+  strcpy(NID.szTip,trey.c_str());
+  Shell_NotifyIcon(NIM_ADD, &NID);
+}
+//----------------------------------------------------------------------------
+void __fastcall TForm1::Timer1Timer(TObject *Sender)
+{
+   TDateTime n = Now();
+   ClockMemo->Text = n;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::FormClose(TObject *Sender, TCloseAction &Action)
+{
+  //Удаляем значёк из трея
+  Shell_NotifyIcon(NIM_DELETE, &NID);   
+}
+//---------------------------------------------------------------------------
+
+
+
